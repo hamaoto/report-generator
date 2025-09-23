@@ -9,8 +9,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- プレースホルダーの定義 ---
     const generalPlaceholders = ['理想・目標', '現状', '解決策'];
     const personalPlaceholders = [
-        '理想・目標（現状+本番に向けてより求めるもの）', 
-        '現状（確認テストが悪かったら原因）', 
+        '理想・目標（現状(+→-)+本番に向けてより求めるもの）', 
+        '現状（原因があるなら記載(確認テスト高得点→必要なしの場合あり)）', 
         '具体的な行動・勉強方法（原因→解決策、理想を達成するための勉強法）'
     ];
 
@@ -22,8 +22,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (urlParams.includes('my-mode')) {
             // 自分用の詳しいプレースホルダーを設定
-            homeworkReviewTextarea.placeholder = '⚪︎→褒める(数値付き) ×→指導簿に記載';
-            testReviewTextarea.placeholder = '⚪︎→褒める(数値付き) ×→指導簿に記載'; // ★追加
+            homeworkReviewTextarea.placeholder = '例:宿題が全て達成できています！この調子で進めていきましょう！';
+            testReviewTextarea.placeholder = '例:単語、文法ともに8割を超えていて素晴らしいです！ + 求めるものなど'; // ★追加
         } else {
             // 一般向けのプレースホルダーを設定
             homeworkReviewTextarea.placeholder = '';
