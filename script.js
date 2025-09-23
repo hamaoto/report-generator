@@ -5,8 +5,27 @@ document.addEventListener('DOMContentLoaded', function() {
     const outputContainer = document.getElementById('output-container');
 
     const subjectOptions = ['数学', '英語', '国語', '理科', '社会', '物理', '化学', '生物', '地学', '世界史', '日本史', '地理', 'その他'];
+    // 1. 2種類のプレースホルダーを準備
+    
+    // 一般講師向けのシンプルなプレースホルダー
+    const generalPlaceholders = ['理想・目標', '現状', '解決策'];
+
+    // 自分用の詳しいプレースホルダー
+    const personalPlaceholders = [
+        '理想・目標（現状+本番に向けてより求めるもの）', 
+        '現状（確認テストが悪かったら原因）', 
+        '具体的な行動・勉強方法（原因→解決策、理想を達成するための勉強法）'
+    ];
+
 
     function createPlanCard() {
+        // 2. URLに「合言葉」があるかチェックして、使うプレースホルダーを決める
+        let placeholdersToUse = generalPlaceholders; // デフォルトは一般向け
+        const urlParams = window.location.search;
+        if (urlParams.includes('my-mode')) {
+            placeholdersToUse = personalPlaceholders; // 「合言葉」があれば自分用に切り替え
+        }
+
         const cardDiv = document.createElement('div');
         cardDiv.classList.add('plan-card');
         const cardHeader = document.createElement('div');
@@ -28,13 +47,15 @@ document.addEventListener('DOMContentLoaded', function() {
         cardHeader.appendChild(removeButton);
         const cardBody = document.createElement('div');
         cardBody.classList.add('plan-card-body');
-        const placeholders = ['理想・目標', '現状', '解決策'];
+        
         const inputClasses = ['goal-input', 'situation-input', 'solution-input'];
-        for (let i = 0; i < placeholders.length; i++) {
+
+        // 3. 決まった方のプレースホルダーを使って入力欄を作成
+        for (let i = 0; i < placeholdersToUse.length; i++) {
             const textarea = document.createElement('textarea');
             textarea.classList.add('plan-input');
             textarea.classList.add(inputClasses[i]);
-            textarea.placeholder = placeholders[i];
+            textarea.placeholder = placeholdersToUse[i]; // ここで使い分ける！
             cardBody.appendChild(textarea)
         }
         cardDiv.appendChild(cardHeader);
