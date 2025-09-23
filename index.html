@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>武田特訓報告</title>
+    <link rel="stylesheet" href="style.css"> 
+</head>
+<body>
+    <div class="container">
+        <h1>武田特訓報告</h1>
+
+        <div class="section">
+            <h2>1. 宿題/確認テストの振り返り・特記事項</h2>
+            <div class="static-input-group">
+                <label for="homework-review">⚪︎ 宿題の達成度、完成度</label>
+                <textarea id="homework-review" class="plan-input" rows="2" placeholder=""></textarea>
+            </div>
+            <div class="static-input-group">
+                <label for="test-review">⚪︎ 確認テストの結果</label>
+                <textarea id="test-review" class="plan-input" rows="2" placeholder=""></textarea>
+            </div>
+            <div class="static-input-group">
+                <label for="events-notes">⚪︎ 行事・テスト等のイベント</label>
+                <textarea id="events-notes" class="plan-input" rows="2" placeholder=""></textarea>
+            </div>
+            <div class="static-input-group">
+                <label for="other-notes">⚪︎ その他</label>
+                <textarea id="other-notes" class="plan-input" rows="2" placeholder=""></textarea>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>2. 教科ごとの報告</h2>
+            <div id="plan-container">
+                </div>
+            <button id="add-plan-button" class="add-button">+</button>
+        </div>
+        
+        <div class="section">
+            <h2>3. 特訓報告を生成</h2>
+            <p>下のボタンを押すと、入力した内容がコピペできる形で表示されます。</p>
+            <button id="generate-button" class="main-button">特訓報告を生成</button>
+            <div id="output-container">
+                </div>
+        </div>
+
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
