@@ -7,27 +7,28 @@ document.addEventListener('DOMContentLoaded', function() {
     const subjectOptions = ['数学', '英語', '国語', '理科', '社会', '物理', '化学', '生物', '地学', '世界史', '日本史', '地理', 'その他'];
 
     // --- プレースホルダーの定義 ---
-    const generalPlaceholders = ['理想・目標', '現状', '解決策'];
+    const generalPlaceholders = ['振り返り', '理想・目標', '現状', '解決策'];
     const personalPlaceholders = [
-        '理想・目標（現状(+→-)+本番に向けてより求めるもの）', 
-        '現状（原因があるなら記載(確認テスト高得点→必要なしの場合あり)）', 
-        '具体的な行動・勉強方法（原因→解決策、理想を達成するための勉強法）'
+        '振り返り（1.現状:プラスとマイナス≒問題）',
+        '理想・目標（2.理想:一つ上のステータス,マイナス部分をなくすこと 4.課題≒原因）', 
+        '現状（3.原因(現状と理想のギャップの原因) 3.5真因）', 
+        '具体的な行動・勉強方法（5.解決策(課題の具体化)）'
     ];
 
     // URLをチェックして静的な入力欄のプレースホルダーを切り替える
     function setStaticPlaceholders() {
         const urlParams = window.location.search;
         const homeworkReviewTextarea = document.getElementById('homework-review');
-        const testReviewTextarea = document.getElementById('test-review'); // ★追加
+        const testReviewTextarea = document.getElementById('test-review');
 
         if (urlParams.includes('my-mode')) {
             // 自分用の詳しいプレースホルダーを設定
             homeworkReviewTextarea.placeholder = '例:宿題が全て達成できています！この調子で進めていきましょう！';
-            testReviewTextarea.placeholder = '例:単語、文法ともに8割を超えていて素晴らしいです！ + 求めるものなど'; // ★追加
+            testReviewTextarea.placeholder = '例:単語、文法ともに8割を超えていて素晴らしいです！ + 求めるものなど';
         } else {
             // 一般向けのプレースホルダーを設定
             homeworkReviewTextarea.placeholder = '';
-            testReviewTextarea.placeholder = ''; // ★追加
+            testReviewTextarea.placeholder = '';
         }
     }
 
@@ -61,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const cardBody = document.createElement('div');
         cardBody.classList.add('plan-card-body');
         
-        const inputClasses = ['goal-input', 'situation-input', 'solution-input'];
+        const inputClasses = ['review-input', 'goal-input', 'situation-input', 'solution-input'];
 
         for (let i = 0; i < placeholdersToUse.length; i++) {
             const textarea = document.createElement('textarea');
@@ -113,31 +114,46 @@ document.addEventListener('DOMContentLoaded', function() {
     function generateReport() {
         outputContainer.innerHTML = '';
         const planCards = document.querySelectorAll('.plan-card');
-        const goalLines = [],
+        
+        const subjectReviewLines = [],
+            goalLines = [],
             situationLines = [],
             solutionLines = [];
+
         planCards.forEach(card => {
             const subject = card.querySelector('select').value;
+            const review = card.querySelector('.review-input').value.trim();
             const goal = card.querySelector('.goal-input').value.trim();
             const situation = card.querySelector('.situation-input').value.trim();
             const solution = card.querySelector('.solution-input').value.trim();
-            if (goal) goalLines.push(`⚪︎ ${subject}\n→ ${goal}`);
-            if (situation) situationLines.push(`⚪︎ ${subject}\n→ ${situation}`);
-            if (solution) solutionLines.push(`⚪︎ ${subject}\n→ ${solution}`)
+
+            // ★変更点: ここから '→ ' を削除しました
+            if (review) subjectReviewLines.push(`⚪︎ ${subject}\n${review}`);
+            if (goal) goalLines.push(`⚪︎ ${subject}\n${goal}`);
+            if (situation) situationLines.push(`⚪︎ ${subject}\n${situation}`);
+            if (solution) solutionLines.push(`⚪︎ ${subject}\n${solution}`)
         });
+
         const homeworkReview = document.getElementById('homework-review').value.trim();
         const testReview = document.getElementById('test-review').value.trim();
         const eventsNotes = document.getElementById('events-notes').value.trim();
         const otherNotes = document.getElementById('other-notes').value.trim();
+        
         const reviewLines = [];
-        if (homeworkReview) reviewLines.push(`⚪︎ 宿題の達成度、完成度\n→ ${homeworkReview}`);
-        if (testReview) reviewLines.push(`⚪︎ 確認テストの結果\n→ ${testReview}`);
+        // ★変更点: ここからも '→ ' を削除しました
+        if (homeworkReview) reviewLines.push(`⚪︎ 宿題の達成度、完成度\n${homeworkReview}`);
+        if (testReview) reviewLines.push(`⚪︎ 確認テストの結果\n${testReview}`);
+        
         const notesLines = [];
-        if (eventsNotes) notesLines.push(`⚪︎ 行事・テスト等のイベント\n→ ${eventsNotes}`);
-        if (otherNotes) notesLines.push(`⚪︎ その他\n→ ${otherNotes}`);
+        // ★変更点: ここからも '→ ' を削除しました
+        if (eventsNotes) notesLines.push(`⚪︎ 行事・テスト等のイベント\n${eventsNotes}`);
+        if (otherNotes) notesLines.push(`⚪︎ その他\n${otherNotes}`);
         
         if (reviewLines.length > 0) outputContainer.appendChild(createBox('【宿題/確認テストの振り返り】', reviewLines));
         if (notesLines.length > 0) outputContainer.appendChild(createBox('【特記事項】', notesLines));
+        
+        if (subjectReviewLines.length > 0) outputContainer.appendChild(createBox('【振り返り】', subjectReviewLines));
+        
         if (goalLines.length > 0) outputContainer.appendChild(createBox('【理想・目標】', goalLines));
         if (situationLines.length > 0) outputContainer.appendChild(createBox('【現状】', situationLines));
         if (solutionLines.length > 0) outputContainer.appendChild(createBox('【具体的な行動・勉強法】', solutionLines));
