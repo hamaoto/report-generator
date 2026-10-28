@@ -157,12 +157,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (goalLines.length > 0) outputContainer.appendChild(createBox('【理想・目標】', goalLines));
         if (situationLines.length > 0) outputContainer.appendChild(createBox('【現状】', situationLines));
         if (solutionLines.length > 0) outputContainer.appendChild(createBox('【具体的な行動・勉強法】', solutionLines));
+        
+        recordUsageLog(); // アクセスログを送信
     }
 
     // アクセスログを送信する関数
     function recordUsageLog() {
         // 先ほどコピーしたGASのウェブアプリURLをここに貼る
-        const gasUrl = 'https://script.google.com/macros/s/AKfycbymkLwdKUizoRyaNcWHCWzOgHvbaUKEwgEp44n6oJ7Slsu5QHML3qBeHUcisBtmcOMlYg/exec'; 
+        const gasUrl = 'https://script.google.com/macros/s/AKfycbycUXpyHuHlFImFPHY_RR0lszWgWnTZZIs2KgA-8Z7laJjS4H0LH4UvNuywg0XzXPkg/exec'; 
 
         // 1. 端末を識別するIDをlocalStorageで管理（なければランダム生成）
         let deviceId = localStorage.getItem('takeda_device_id');
