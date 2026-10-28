@@ -159,6 +159,34 @@ document.addEventListener('DOMContentLoaded', function() {
         if (solutionLines.length > 0) outputContainer.appendChild(createBox('【具体的な行動・勉強法】', solutionLines));
     }
 
+    // アクセスログを送信する関数
+    function recordUsageLog() {
+        // 先ほどコピーしたGASのウェブアプリURLをここに貼る
+        const gasUrl = 'https://script.google.com/macros/s/AKfycbymkLwdKUizoRyaNcWHCWzOgHvbaUKEwgEp44n6oJ7Slsu5QHML3qBeHUcisBtmcOMlYg/exec'; 
+
+        // 1. 端末を識別するIDをlocalStorageで管理（なければランダム生成）
+        let deviceId = localStorage.getItem('takeda_device_id');
+        if (!deviceId) {
+            deviceId = 'PC-' + Math.random().toString(36).substring(2, 9);
+            localStorage.setItem('takeda_device_id', deviceId);
+        }
+
+        // 2. IP取得はせず、端末IDとブラウザ情報だけをセット
+        const payload = {
+            deviceId: deviceId,
+            userAgent: navigator.userAgent
+        };
+
+        // 3. GASへPOST送信 (一方通行)
+        fetch(gasUrl, {
+            method: 'POST',
+            body: JSON.stringify(payload),
+            headers: {
+                'Content-Type': 'text/plain' 
+            }
+        }).catch(e => console.error('ログ送信エラー:', e));
+    }
+
     // --- イベントリスナーと初期化処理 ---
     addPlanButton.addEventListener('click', createPlanCard);
     generateButton.addEventListener('click', generateReport);
