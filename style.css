@@ -90,9 +90,10 @@ p {
     border: 1px solid #ccc;
     border-radius: 6px;
     font-size: 16px;
-    resize: vertical;
     min-height: 50px;
     box-sizing: border-box;
+    resize: none;
+    overflow-y: hidden;
 }
 
 .static-input-group {
