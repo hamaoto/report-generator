@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
         planContainer.appendChild(cardDiv)
     }
     
-    function createBox(title, lines) {
+    function createBox(title, lines, contentText = lines.join('\n\n'), includeTitleInCopy = true) {
         const boxDiv = document.createElement('div');
         boxDiv.classList.add('output-box');
         const boxHeader = document.createElement('div');
@@ -106,10 +106,9 @@ document.addEventListener('DOMContentLoaded', function() {
         copyButton.classList.add('copy-button');
         copyButton.textContent = 'コピー';
         const contentElement = document.createElement('pre');
-        const contentText = lines.join('\n\n');
         contentElement.textContent = contentText;
         copyButton.addEventListener('click', () => {
-            const fullTextToCopy = `${title}\n${contentText}`;
+            const fullTextToCopy = includeTitleInCopy ? `${title}\n${contentText}` : contentText;
             navigator.clipboard.writeText(fullTextToCopy).then(() => {
                 copyButton.textContent = 'コピー完了！';
                 setTimeout(() => {
@@ -123,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }, 2000)
             })
         });
-        boxHeader.appendChild(titleElement);
+        if (title) boxHeader.appendChild(titleElement);
         boxHeader.appendChild(copyButton);
         boxDiv.appendChild(boxHeader);
         boxDiv.appendChild(contentElement);
@@ -155,17 +154,26 @@ document.addEventListener('DOMContentLoaded', function() {
         const otherNotes = document.getElementById('other-notes').value.trim();
         
         const reviewLines = [];
-        // ★変更点: ここからも '→ ' を削除しました
         if (homeworkReview) reviewLines.push(`⚪︎ 生徒自身の振り返り\n${homeworkReview}`);
         if (testReview) reviewLines.push(`⚪︎ 講師からのコメント\n${testReview}`);
         
         const notesLines = [];
-        // ★変更点: ここからも '→ ' を削除しました
         if (eventsNotes) notesLines.push(`⚪︎ 行事・テスト等のイベント\n${eventsNotes}`);
         if (otherNotes) notesLines.push(`⚪︎ その他\n${otherNotes}`);
-        
-        if (reviewLines.length > 0) outputContainer.appendChild(createBox('【生徒自身の振り返り/講師からのコメント】', reviewLines));
-        if (notesLines.length > 0) outputContainer.appendChild(createBox('【特記事項】', notesLines));
+
+        const reviewAndNotesSections = [];
+        if (reviewLines.length > 0) {
+            reviewAndNotesSections.push(
+                `【生徒自身の振り返り/講師からのコメント】\n${reviewLines.join('\n\n')}`
+            );
+        }
+        if (notesLines.length > 0) {
+            reviewAndNotesSections.push(`【特記事項】\n${notesLines.join('\n\n')}`);
+        }
+        if (reviewAndNotesSections.length > 0) {
+            const reviewAndNotesText = reviewAndNotesSections.join('\n\n');
+            outputContainer.appendChild(createBox('【振り返り・特記事項】', [], reviewAndNotesText, false));
+        }
         
         if (goalLines.length > 0) outputContainer.appendChild(createBox('【理想・目標】', goalLines));
         if (situationLines.length > 0) outputContainer.appendChild(createBox('【現状】', situationLines));
@@ -176,7 +184,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // アクセスログを送信する関数
     function recordUsageLog() {
-        // 先ほどコピーしたGASのウェブアプリURLをここに貼る
         const gasUrl = 'https://script.google.com/macros/s/AKfycbycUXpyHuHlFImFPHY_RR0lszWgWnTZZIs2KgA-8Z7laJjS4H0LH4UvNuywg0XzXPkg/exec'; 
 
         // 1. 端末を識別するIDをlocalStorageで管理（なければランダム生成）
