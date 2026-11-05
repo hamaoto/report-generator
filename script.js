@@ -5,14 +5,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const outputContainer = document.getElementById('output-container');
 
     const subjectOptions = ['英語', '数学', '国語', '理科', '社会', '物理', '化学', '生物', '地学', '世界史', '日本史', '地理', 'その他'];
-
-    // --- プレースホルダーの定義 ---
-    const generalPlaceholders = ['理想・目標', '現状', '具体的な行動・勉強方法'];
-    const personalPlaceholders = [
-        '理想・目標（2.理想:一つ上のステータス,マイナス部分をなくすこと 4.課題≒原因）', 
-        '現状（3.原因(現状と理想のギャップの原因) 3.5真因）', 
-        '具体的な行動・勉強方法（5.解決策(課題の具体化)）'
-    ];
+    const inputLabels = ['理想・目標', '現状', '具体的な行動・勉強法'];
+    let planCardCount = 0;
 
     function resizeTextarea(textarea) {
         textarea.style.height = 'auto';
@@ -51,16 +45,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-
     function createPlanCard() {
-        let placeholdersToUse = generalPlaceholders;
-        const urlParams = window.location.search;
-        if (urlParams.includes('my-mode')) {
-            placeholdersToUse = personalPlaceholders;
-        }
-
         const cardDiv = document.createElement('div');
         cardDiv.classList.add('plan-card');
+        const cardId = ++planCardCount;
         const cardHeader = document.createElement('div');
         cardHeader.classList.add('plan-card-header');
         const selectElement = document.createElement('select');
@@ -83,46 +71,55 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const inputClasses = ['goal-input', 'situation-input', 'solution-input'];
 
-        for (let i = 0; i < placeholdersToUse.length; i++) {
+        for (let i = 0; i < inputLabels.length; i++) {
+            const inputGroup = document.createElement('div');
+            inputGroup.classList.add('plan-input-group');
+            const label = document.createElement('label');
+            label.textContent = inputLabels[i];
+            label.htmlFor = `plan-${cardId}-${inputClasses[i]}`;
             const textarea = document.createElement('textarea');
+            textarea.id = label.htmlFor;
             textarea.classList.add('plan-input');
             textarea.classList.add(inputClasses[i]);
-            textarea.placeholder = placeholdersToUse[i];
-            cardBody.appendChild(textarea)
+            inputGroup.appendChild(label);
+            inputGroup.appendChild(textarea);
+            cardBody.appendChild(inputGroup)
         }
         cardDiv.appendChild(cardHeader);
         cardDiv.appendChild(cardBody);
         planContainer.appendChild(cardDiv)
     }
     
-    function createBox(title, lines, contentText = lines.join('\n\n'), includeTitleInCopy = true) {
+    function createBox(title, lines, contentText = lines.join('\n\n'), titleInHeader = false, contentTitle = title) {
         const boxDiv = document.createElement('div');
         boxDiv.classList.add('output-box');
         const boxHeader = document.createElement('div');
         boxHeader.classList.add('output-box-header');
-        const titleElement = document.createElement('h3');
-        titleElement.textContent = title;
+        if (titleInHeader) {
+            boxHeader.classList.add('has-title');
+            const titleElement = document.createElement('h3');
+            titleElement.textContent = title;
+            boxHeader.appendChild(titleElement);
+        }
         const copyButton = document.createElement('button');
         copyButton.classList.add('copy-button');
-        copyButton.textContent = 'コピー';
+        copyButton.textContent = '↓コピー';
         const contentElement = document.createElement('pre');
-        contentElement.textContent = contentText;
+        contentElement.textContent = contentTitle ? `${contentTitle}\n${contentText}` : contentText;
         copyButton.addEventListener('click', () => {
-            const fullTextToCopy = includeTitleInCopy ? `${title}\n${contentText}` : contentText;
-            navigator.clipboard.writeText(fullTextToCopy).then(() => {
+            navigator.clipboard.writeText(contentElement.textContent).then(() => {
                 copyButton.textContent = 'コピー完了！';
                 setTimeout(() => {
-                    copyButton.textContent = 'コピー'
+                    copyButton.textContent = '↓コピー'
                 }, 2000)
             }).catch(err => {
                 console.error('コピーに失敗しました', err);
                 copyButton.textContent = '失敗';
                 setTimeout(() => {
-                    copyButton.textContent = 'コピー'
+                    copyButton.textContent = '↓コピー'
                 }, 2000)
             })
         });
-        if (title) boxHeader.appendChild(titleElement);
         boxHeader.appendChild(copyButton);
         boxDiv.appendChild(boxHeader);
         boxDiv.appendChild(contentElement);
@@ -172,12 +169,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         if (reviewAndNotesSections.length > 0) {
             const reviewAndNotesText = reviewAndNotesSections.join('\n\n');
-            outputContainer.appendChild(createBox('【振り返り・特記事項】', [], reviewAndNotesText, false));
+            outputContainer.appendChild(createBox('今回の特訓内容', [], reviewAndNotesText, true, ''));
         }
         
-        if (goalLines.length > 0) outputContainer.appendChild(createBox('【理想・目標】', goalLines));
-        if (situationLines.length > 0) outputContainer.appendChild(createBox('【現状】', situationLines));
-        if (solutionLines.length > 0) outputContainer.appendChild(createBox('【具体的な行動・勉強法】', solutionLines));
+        if (goalLines.length > 0) outputContainer.appendChild(createBox('もっとよくできる点・課題', goalLines, undefined, true, '【理想・目標】'));
+        if (situationLines.length > 0) outputContainer.appendChild(createBox('原因', situationLines, undefined, true, '【現状】'));
+        if (solutionLines.length > 0) outputContainer.appendChild(createBox('解決策・目標', solutionLines, undefined, true, '【具体的な行動・勉強法】'));
         
         recordUsageLog(); // アクセスログを送信
     }
