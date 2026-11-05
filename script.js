@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const generateButton = document.getElementById('generate-button');
     const outputContainer = document.getElementById('output-container');
 
-    const subjectOptions = ['数学', '英語', '国語', '理科', '社会', '物理', '化学', '生物', '地学', '世界史', '日本史', '地理', 'その他'];
+    const subjectOptions = ['英語', '数学', '国語', '理科', '社会', '物理', '化学', '生物', '地学', '世界史', '日本史', '地理', 'その他'];
 
     // --- プレースホルダーの定義 ---
     const generalPlaceholders = ['理想・目標', '現状', '具体的な行動・勉強方法'];
